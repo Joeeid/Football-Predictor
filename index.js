@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 const app = express();
 const port = 3000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const YOUR_API_KEY = "b31bd953f3mshc3882e09f24bcc5p1c10a4jsncd8e06b94690";
+const YOUR_API_KEY = "";
 var fedFilter = "all";
 var matchFilter;
 
