@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="/styles/main.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Exo+2&family=Libre+Barcode+128&display=swap"
+			rel="stylesheet"
+		/>
+		<title>Football Predictor</title>
+	</head>
+	<body class="d-flex h-100 text-center">
+		<div
+			class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column bg-dark"
+			style="--bs-bg-opacity: 0.6"
+		>
+			<header class="mb-auto">
+				<div>
+					<h1 class="mb-0 text-white">Football Predictor⚽</h1>
+				</div>
+			</header>
+
+			<main class="px-3">
+				<% if (locals.error) { %>
+				<div class="d-flex justify-content-center">
+					<div
+						class="alert alert-danger d-flex align-items-center px-5"
+						role="alert"
+					>
+						<div><%= error %>!<br />Please try again later.</div>
+					</div>
+				</div>
+				<% } %>
+				<div class="d-flex justify-content-center">
+					<form action="/filter" id="filterForm" method="post">
+						<select
+							class="form-select form-select-lg w-auto"
+							aria-label="Select a Federation"
+							name="federation"
+							onchange="document.getElementById('filterForm').submit()"
+						>
+							<option value="all">All Federations</option>
+							<% if (locals.federations) { %> <% federations.forEach(element =>
+							{ %>
+							<option value="<%= element %>" <%= element === selectedFederation ? 'selected' : '' %> ><%= element %></option>
+							<% }) } %>
+						</select>
+					</form>
+				</div>
+				<div class="d-flex justify-content-center mt-2">
+					<form action="/predict" method="post">
+						<select
+							class="form-select form-select-lg w-auto"
+							aria-label="Select a Match"
+							name="match"
+							id="match"
+							onchange="enablePredict();"
+						>
+							<option value="all">Select a Match</option>
+
+							<% if (locals.matches) { %> <% var prediction; %> <%
+							matches.forEach(element => { %>
+							<option value="<%= element.id %>" <%= element.id == selectedMatch ? "selected" : "" %>>
+								<%= `${element.home_team} VS ${element.away_team}` %>
+							</option>
+							<% if(element.id == selectedMatch){ 
+								prediction = element.prediction; 
+								switch (prediction) {
+									case "1":
+										prediction = element.home_team + " wins";
+										break;
+									case "2":
+										prediction = element.away_team + " wins";
+										break;
+									case "X":
+										prediction = "Draw";
+									case "1X":
+										prediction = element.home_team + " wins or Draw";
+										break;
+									case "2X":
+										prediction = element.away_team + " wins or Draw";
+										break;
+									case "12":
+										prediction = "One team Wins (No Draw)";
+										break;
+									default:
+										prediction = "No prediction available";
+								}
+							} 
+							}) } %>
+						</select>
+						<% if (selectedMatch !== "all") { %>
+							<h4 class="text-white bg-success bg-opacity-50 rounded"><%= prediction %></h4>
+						<% } %>
+						<button
+							type="submit"
+							id="predictBtn"
+							class="btn btn-lg btn-success px-4 mt-4 <%= locals.error ? 'disabled' : '' %>"
+						>
+							Predict
+						</button>
+					</form>
+				</div>
+				<% if (locals.accuracy) { %>
+				<p class="text-white-50 mt-2">
+					Yesterday's Accuracy Rate was approx <%= Math.round(accuracy*100) %>%
+				</p>
+				<% } %>
+			</main>
+
+			<footer class="mt-auto text-white-50">
+				<p>
+					Developped By
+					<a href="https://github.com/joeeid" target="_blank" class="text-white">
+						Joe Eid
+					</a>.
+				</p>
+			</footer>
+		</div>
+		<script src="/bootstrap/js/bootstrap.js"></script>
+		<script src="/js/main.js"></script>
+	</body>
+</html>
